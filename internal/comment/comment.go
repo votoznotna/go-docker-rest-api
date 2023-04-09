@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrFetchingComment = errors.New("could not fetch comment by ID")
+	ErrPostingComment  = errors.New("could not post comment by ID")
 	ErrUpdatingComment = errors.New("could not update comment")
 	ErrNoCommentFound  = errors.New("no comment found")
 	ErrDeletingComment = errors.New("could not delete comment")
@@ -17,7 +18,7 @@ var (
 
 // CommentStore - defines the interface we need our comment storage
 // layer to implement
-type CommentStore interface {
+type Store interface {
 	GetComment(context.Context, string) (Comment, error)
 	PostComment(context.Context, Comment) (Comment, error)
 	UpdateComment(context.Context, string, Comment) (Comment, error)
@@ -34,11 +35,11 @@ type Comment struct {
 
 // Service - the struct for our comment service
 type Service struct {
-	Store CommentStore
+	Store Store
 }
 
 // NewService - returns a new comment service
-func NewService(store CommentStore) *Service {
+func NewService(store Store) *Service {
 	return &Service{
 		Store: store,
 	}
@@ -57,11 +58,12 @@ func (s *Service) GetComment(ctx context.Context, ID string) (Comment, error) {
 
 // PostComment - adds a new comment to the database
 func (s *Service) PostComment(ctx context.Context, cmt Comment) (Comment, error) {
-	cmt, err := s.Store.PostComment(ctx, cmt)
+	insertedCmt, err := s.Store.PostComment(ctx, cmt)
 	if err != nil {
 		log.Errorf("an error occurred adding the comment: %s", err.Error())
+		return Comment{}, ErrPostingComment
 	}
-	return cmt, nil
+	return insertedCmt, nil
 }
 
 // UpdateComment - updates a comment by ID with new comment info
@@ -71,6 +73,7 @@ func (s *Service) UpdateComment(
 	cmt, err := s.Store.UpdateComment(ctx, ID, newComment)
 	if err != nil {
 		log.Errorf("an error occurred updating the comment: %s", err.Error())
+		return Comment{}, ErrUpdatingComment
 	}
 	return cmt, nil
 }
