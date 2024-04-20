@@ -13,6 +13,7 @@ import (
 )
 
 type CommentService interface {
+	GetComments(ctx context.Context) ([]comment.Comment, error)
 	GetComment(ctx context.Context, ID string) (comment.Comment, error)
 	PostComment(ctx context.Context, cmt comment.Comment) (comment.Comment, error)
 	UpdateComment(ctx context.Context, ID string, newCmt comment.Comment) (comment.Comment, error)
@@ -56,6 +57,24 @@ func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := json.NewEncoder(w).Encode(cmt); err != nil {
+		panic(err)
+	}
+}
+
+// GetComments - retrieve all comments
+func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
+
+	cmts, err := h.Service.GetComments(r.Context())
+	if err != nil {
+		if errors.Is(err, comment.ErrFetchingComment) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(cmts); err != nil {
 		panic(err)
 	}
 }

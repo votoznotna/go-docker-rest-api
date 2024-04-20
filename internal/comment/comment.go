@@ -19,6 +19,7 @@ var (
 // CommentStore - defines the interface we need our comment storage
 // layer to implement
 type Store interface {
+	GetComments(context.Context) ([]Comment, error)
 	GetComment(context.Context, string) (Comment, error)
 	PostComment(context.Context, Comment) (Comment, error)
 	UpdateComment(context.Context, string, Comment) (Comment, error)
@@ -43,6 +44,17 @@ func NewService(store Store) *Service {
 	return &Service{
 		Store: store,
 	}
+}
+
+// GetComment - retrieves comments by their ID from the database
+func (s *Service) GetComments(ctx context.Context) ([]Comment, error) {
+	// calls store passing in the context
+	cmts, err := s.Store.GetComments(ctx)
+	if err != nil {
+		log.Errorf("an error occured fetching the comments: %s", err.Error())
+		return []Comment{}, ErrFetchingComment
+	}
+	return cmts, nil
 }
 
 // GetComment - retrieves comments by their ID from the database

@@ -64,6 +64,11 @@
 > 2-d terminal window: 
 > curl --location --request POST 'http://localhost:8080/api/v1/comment' -v --header 'Content-Type: application/json' --header 'Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.2yPNTTY3Y5jUwYBPAJAfUc84Ybv2qPbZY_OHI7tzuug' --data-raw '{"slug": "hello", "body": "body", "author": "me"}'
 
+> 1-st terminal window:
+> task run
+> 2-d terminal window:
+> curl --location --request GET 'http://localhost:8080/api/v1/comments'
+
 # testing:
 > go test ./... -v
 > go test -tags=integration ./... -v

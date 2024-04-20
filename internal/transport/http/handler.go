@@ -59,6 +59,7 @@ func (h *Handler) mapRoutes() {
 	})
 	h.Router.HandleFunc("/alive", h.AliveCheck).Methods("GET")
 	// h.Router.HandleFunc("/ready", h.ReadyCheck).Methods("GET")
+	h.Router.HandleFunc("/api/v1/comments", h.GetComments).Methods("GET")
 	h.Router.HandleFunc("/api/v1/comment", JWTAuth(h.PostComment)).Methods("POST")
 	h.Router.HandleFunc("/api/v1/comment/{id}", h.GetComment).Methods("GET")
 	h.Router.HandleFunc("/api/v1/comment/{id}", JWTAuth(h.UpdateComment)).Methods("PUT")
