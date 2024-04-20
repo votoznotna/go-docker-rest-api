@@ -1,6 +1,6 @@
 # go-rest-api
 
-Go Rest API in Go
+Go Rest API in Go with Docker usage
 
 ## Technologies Used:
 
